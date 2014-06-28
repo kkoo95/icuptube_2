@@ -16,7 +16,7 @@ Your Ember.js project is almost ready! Here's how to get started:
 
 - Open index.html in your browser
 
-Tests (not kept) lol
+Tests
 =====
 
 This starter kit comes with an integration test sample, written for QUnit runner. 
