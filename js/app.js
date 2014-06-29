@@ -8,19 +8,18 @@ App.IndexRoute = Ember.Route.extend({
     return this.store.findAll('video');
   }
 });
-/*
-App.VideoboxComponent = Ember.Component.extend({
-  template: function() {
-    return Ember.Handlebars.compile("<div>youtube.api" + video.get('youtubeid') + "</div>");
+
+App.VideoBoxComponent = Ember.Component.extend({
+  youtubeVideo: function() {
+    return new Handlebars.SafeString("<div>youtube.api" + this.get('video.youtubeid') + "</div>");
   }.property()
 });
-*/
 
 App.ApplicationAdapter = DS.FixtureAdapter.extend({
 });
 
 App.Video = DS.Model.extend({
-  youtubeId : DS.attr('string')
+  youtubeid : DS.attr('string')
 });
 
 App.Video.FIXTURES = [
