@@ -2,24 +2,43 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Ember Starter Kit</title>
+  <title>Icuptube</title>
   <link rel="stylesheet" href="css/bootstrap.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <script type="text/x-handlebars">
-    <h2>Welcome to Ember.js</h2>
-
+  <script type="text/x-handlebars" data-template-name="application">
+    <li>
+      <ul>Home</ul>
+      <ul>BACON</ul>
+      <ul>
+        <div>
+          {{input placeholder="Youtube ID"}}
+        </div>
+      </ul>
+    </li>
+    
     {{outlet}}
   </script>
 
-  <script type="text/x-handlebars" id="index">
-    <ul>
-    {{#each item in model}}
-      <li>{{item}}</li>
+  <script type="text/x-handlebars" data-template-name="index">
+    <!--<ul>
+    {{#each}}
+      {{video-box video=this}}
     {{/each}}
     </ul>
+    -->
   </script>
+<!--  
+  <script type="text/x-handlebars" data-template-name="components/video-box">
+    {{yield}}
+  </script>
+-->
+  
+  <script type="text/x-handlebars" data-template-name="videos">
+    videlols
+  </script>
+
 
   <script src="js/libs/jquery-1.10.2.js"></script>
   <script src="js/libs/handlebars-1.1.2.js"></script>
