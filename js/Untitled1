@@ -4,39 +4,35 @@ var App = Ember.Application.create({
   }
 });
 
+App.Router.map(function() {
+});
+
 App.IndexRoute = Ember.Route.extend({
   model: function() {
     return this.store.findAll('video');
   }
 });
 
-App.VideoboxRoute = Ember.Route.extend({
-  setupController: function(controller, video) {
-    controller.set('model', video);
-  }
-});
-
-App.VideoboxController = Ember.ObjectController.extend({
+App.VideoBoxComponent = Ember.Component.extend({
   ytVideoImg: "",
   actions: {
-    loadImg: function() {
+    ytVideoLoad: function() {
       var view = this;
       
-      getYTVideoInfo(this.get('youtubeid'), function(response) {
+      getYTVideoInfo(this.get('video.youtubeid'), new function(response) {
         var info = JSON.parse(response.result);
         view.set('ytVideoImg', info.snippet.thumbnails.medium);  
-      });
-  }}
-});
-
-App.VideoboxView = Ember.View.extend({
+      })
+      
+    }
+  }
 });
 
 App.ApplicationAdapter = DS.FixtureAdapter.extend({
 });
 
 App.Video = DS.Model.extend({
-  youtubeid : DS.attr('string'),
+  youtubeid : DS.attr('string')
 });
 
 App.Video.FIXTURES = [
@@ -115,7 +111,6 @@ function getYTVideoInfo(id, callback) {
 }
 
 function handleYoutubeAPILoaded() {
-  App.VideoboxController.send("loadImg");
 }
 
 function onYouTubeIframeAPIReady() {
