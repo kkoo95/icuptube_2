@@ -4,32 +4,27 @@ var App = Ember.Application.create({
   }
 });
 
+App.deferReadiness();
+
+App.Router.map(function() {
+});
+
 App.IndexRoute = Ember.Route.extend({
   model: function() {
     return this.store.findAll('video');
   }
 });
 
-App.VideoboxRoute = Ember.Route.extend({
-  setupController: function(controller, video) {
-    controller.set('model', video);
-  }
-});
-
-App.VideoboxController = Ember.ObjectController.extend({
+App.VideoBoxComponent = Ember.Component.extend({
   ytVideoImg: "",
-  actions: {
-    loadImg: function() {
-      var view = this;
-      
-      getYTVideoInfo(this.get('youtubeid'), function(response) {
-        var info = JSON.parse(response.result);
-        view.set('ytVideoImg', info.snippet.thumbnails.medium);  
-      });
-  }}
-});
+  loadImg: function() {
+    var view = this;
 
-App.VideoboxView = Ember.View.extend({
+    getYTVideoInfo(this.get('video.youtubeid'), function(response) {
+      var info = response.items[0];
+      view.set('ytVideoImg', info.snippet.thumbnails.medium.url);  
+    });
+  }.on('init'),
 });
 
 App.ApplicationAdapter = DS.FixtureAdapter.extend({
@@ -86,6 +81,9 @@ App.Video.FIXTURES = [
   }
 ];
 
+App.Videobox = DS.Model.extend({
+});
+
 var player;
 
 function newYTPlayer(selector, id) {
@@ -115,7 +113,7 @@ function getYTVideoInfo(id, callback) {
 }
 
 function handleYoutubeAPILoaded() {
-  App.VideoboxController.send("loadImg");
+    App.advanceReadiness();
 }
 
 function onYouTubeIframeAPIReady() {
