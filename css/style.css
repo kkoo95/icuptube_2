@@ -1,3 +1,11 @@
 /* Put your CSS here */
 .ember-application {
 }
+
+.ytimg {
+  object-fit: contain;
+}
+
+iframe {
+  display: block;
+}

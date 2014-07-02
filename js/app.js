@@ -16,15 +16,33 @@ App.IndexRoute = Ember.Route.extend({
 });
 
 App.VideoBoxComponent = Ember.Component.extend({
-  ytVideoImg: "",
+  ytVideoImgSrc: null,
+  
+  ytVideoImg: function() {
+    if (this.get('ytVideoImgSrc')) {
+      return new Handlebars.SafeString("<img class='ytimg' height='200' width='200' src='" + this.get('ytVideoImgSrc') + "'/>");
+    }
+    else
+      return new Handlebars.SafeString("<img />");
+  }.property('ytVideoImgSrc'),
+  
   loadImg: function() {
     var view = this;
 
     getYTVideoInfo(this.get('video.youtubeid'), function(response) {
       var info = response.items[0];
-      view.set('ytVideoImg', info.snippet.thumbnails.medium.url);  
+      view.set('ytVideoImgSrc', info.snippet.thumbnails.medium.url);  
     });
   }.on('init'),
+  
+  click: function(event) {
+    if (player) {
+      player.stopVideo();
+    }
+    
+    component = this;
+    player = newYTPlayer(this.elementId, this.get('video.youtubeid'));
+  }
 });
 
 App.ApplicationAdapter = DS.FixtureAdapter.extend({
@@ -85,11 +103,12 @@ App.Videobox = DS.Model.extend({
 });
 
 var player;
+var component;
 
 function newYTPlayer(selector, id) {
-  new YT.Player(selector, {
-    height: '150',
-    width: '150',
+  return new YT.Player(selector, {
+    height: '200',
+    width: '200',
     videoId: id,
     playerVars: {
       autoplay: '1',
