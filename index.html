@@ -2,32 +2,40 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Icuptube</title>
   <link rel="stylesheet" href="css/bootstrap.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <script type="text/x-handlebars" data-template-name="application">
-    <li>
-      <ul>Home</ul>
-      <ul>BACON</ul>
-      <ul>
-        <div>
-          {{input placeholder="Youtube ID"}}
+  <div class="container">
+    <div class="row clearfix">
+      <div class="col-md-12 column">
+
+        <ul class='nav nav-pills'>
+          <li><a>Home</a></li>
+          <li><a>BACON</a></li>
+          <li><div class='top-search-field'>
+              {{input placeholder="Youtube ID" valueBinding='videoId'}}
+              <button {{action 'addVideo'}} class='btn-primary'>Add</button>
+          </div></li>
+        </ul>
+        
+        <div class='outlet'>
+          {{outlet}}
         </div>
-      </ul>
-    </li>
-    
-    {{outlet}}
-    
-    <div id="player"></div>
-    <div id='search-container'></div>
+        
+      </div>    
+    </div>  
+  </div>
   </script>
 
   <script type="text/x-handlebars" data-template-name="index">
-    <ul>
+    <ul class='list-unstyled fix-inline-block-ws'>
     {{#each}}
-      {{video-box video=this}}
+      {{video-box tagName='li' classNames="video-box img-thumbnail" video=this}}
     {{/each}}
     </ul>
   </script>
