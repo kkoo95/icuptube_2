@@ -10,22 +10,37 @@ App.deferReadiness();
 App.Router.map(function() {
 });
 
-App.ApplicationController = Ember.Controller.extend({
-  videoId: "",
+App.ApplicationRoute = Ember.Route.extend({
   actions: {
     addVideo: function() {
-      var video = this.store.createRecord('video', { 
-        youtubeid: this.get('videoId')
-      }); 
-      
-      var controller = this; 
+      var route = this; 
+      var controller = route.get('controller');
 
-      video.save().then(function(video) { 
-        controller.set('videoId', '');
-        controller.controllerFor('index').get('model').addObject(video); 
-      });
+      fetchYTVideoInfo(controller.get('videoId'))
+        .then(
+          function(response) {
+            var info = response.items[0];
+            var video = route.store.createRecord('video', { 
+              youtubeid: info.id
+            });
+            
+            return video.save();
+          })
+        .then(
+          function(video) {
+            var indexController = route.controllerFor('index');
+            
+            indexController.get('model').addObject(video);
+          })
+        .finally(function() {
+           controller.set('videoId', '');
+        })
     }
   }
+});
+
+App.ApplicationController = Ember.Controller.extend({
+  videoId: ""
 });
 
 App.IndexRoute = Ember.Route.extend({
@@ -40,24 +55,49 @@ App.IndexController = Ember.ArrayController.extend({
 });
 
 App.VideoBoxComponent = Ember.Component.extend({
+  classNameBindings: ['videoBoxHidden'],
+  videoBoxHidden: true,
+  ytVideoInfo: null,
   ytVideoTitle: null,
   ytVideoImgSrc: null,
   
   ytVideoImg: function() {
-    if (this.get('ytVideoImgSrc')) {
-      return new Handlebars.SafeString("<img class='ytimg' src='" + this.get('ytVideoImgSrc') + "' title='"+ this.get('ytVideoTitle') +"'/>");
-    }
+    var hbs;
+    var hasSource = this.get('ytVideoImgSrc') != null;
+    
+    this.set('videoBoxHidden', !hasSource);
+    
+    if (this.get('ytVideoImgSrc'))
+      hbs = new Handlebars.SafeString("<img class='ytimg' src='" + this.get('ytVideoImgSrc') + "' title='"+ this.get('ytVideoTitle') +"'/>");
     else
-      return new Handlebars.SafeString("<img />");
+      hbs = new Handlebars.SafeString("<img class='ytimg'/>");
+      
+    return hbs;
   }.property('ytVideoImgSrc'),
+  
+  updateYTVideoImgProperties: function() {
+    var info = this.get('ytVideoInfo');
+
+    this.set('ytVideoTitle', info.snippet.title);
+    this.set('ytVideoImgSrc', info.snippet.thumbnails.medium.url); 
+  }.observes('ytVideoInfo'),
+    
+  playVideo: function() {
+    if (player)
+      player.removeEventListener("onStateChange", "onPlayerStateChange");
+
+    player = newYTPlayer('#' + this.elementId + " .ytimg", this.get('video.youtubeid'));
+
+    player.addEventListener("onStateChange", "onPlayerStateChange");
+
+    playingComponent = this;
+  },
   
   loadImg: function() {
     var view = this;
 
-    fetchYTVideoInfo(this.get('video.youtubeid'), function(response) {
-      var info = response.items[0];
-      view.set('ytVideoImgSrc', info.snippet.thumbnails.medium.url); 
-      view.set('ytVideoTitle', info.snippet.title);
+    fetchYTVideoInfo(this.get('video.youtubeid')).then(function(response) {
+      view.set('ytVideoInfo', response.items[0]);
     });
   }.on('init'),
   
@@ -73,17 +113,6 @@ App.VideoBoxComponent = Ember.Component.extend({
     else {
       this.playVideo();
     }
-  },
-  
-  playVideo: function() {
-      if (player)
-          player.removeEventListener("onStateChange", "onPlayerStateChange");
-
-      player = newYTPlayer('#' + this.elementId + " .ytimg", this.get('video.youtubeid'));
-    
-      player.addEventListener("onStateChange", "onPlayerStateChange");
-    
-      playingComponent = this;
   }
 });
 
@@ -187,14 +216,21 @@ App.Video.FIXTURES = [
 App.Videobox = DS.Model.extend({
 });
 
-function fetchYTVideoInfo(id, callback) {
-  var request = gapi.client.youtube.videos.list({
-    id: id,
-    part: 'snippet',
-    fields: 'items(id,snippet(title,thumbnails(medium)))'
+function fetchYTVideoInfo(id) {
+  return new Ember.RSVP.Promise(function(resolve, reject) {
+    var request = gapi.client.youtube.videos.list({
+      id: id,
+      part: 'snippet',
+      fields: 'items(id,snippet(title,thumbnails(medium)))'
+    });
+  
+    request.execute(function(jsonResp, rawResp) {
+        if (jsonResp)
+          resolve(jsonResp);
+        else
+          reject(rawResp);
+    });
   });
-
-  request.execute(callback);
 }
 
 function handleYoutubeAPILoaded() {
