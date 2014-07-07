@@ -1,0 +1,364 @@
+<<<<<<< .mine
+var lastThumbnailHTML = "";
+var currentId = "";
+var installListener = function() {
+    $(".thumbnail").click(function(event) {
+        var thumbnail = $(this);
+        var videoId = thumbnail.attr("id");
+=======
+var lastImageHTML = "";
+var currentId = "";
+
+var toRed = function() {
+	$("#bacon").animate({"color": "#820D0D",
+						 "borderTopColor":"#820D0D",
+						 "borderLeftColor":"#820D0D",
+						 "borderBottomColor":"#820D0D",
+						 "borderRightColor":"#820D0D"}, 1000, toBlack);
+};
+var toBlack = function() {
+	$("#bacon").animate({"color": "white",
+						 "borderTopColor":"#ffaf0f",
+						 "borderLeftColor":"#ffaf0f",
+						 "borderBottomColor":"#ffaf0f",
+						 "borderRightColor":"#ffaf0f"}, 1000, toRed);
+};
+
+var installListener = function() {
+    $(".thumbnail").click(function(event) {
+        var thumbnailImage = $(this);
+        var videoId = thumbnailImage.attr("id");
+        
+        if (currentId != "")
+            $("#" + currentId).html(lastImageHTML);
+
+        $.get("add_score.php?add_score=" + videoId);
+
+        lastImageHTML = thumbnailImage.html();
+        currentId = videoId;
+
+        thumbnailImage.html("<object id=\"" + videoId +"\"><param name=\"movie\" value=\"https://www.youtube.com/v/" + videoId + "?version=3\"><embed src=\"https://www.youtube.com/v/" + videoId + "?version=3&autoplay=1&vq=large\" type=\"application/x-shockwave-flash\" allowfullscreen=\"true\" allowScriptAccess=\"always\" width=\"200\" height=\"150\"></object>");
+    });
+    
+	$("#add_video_form").submit(function() {
+		var field = $(this).find("#searchfield");
+    	var id = field.val();
+    	var thumbnail;
+    	
+    	$("html").css("cursor", "progress");
+    	
+		$.get("add_video.php", {add: id}, function(data) {
+			$("html").css("cursor", "default");
+			field.val("");
+
+			if (data == "") {
+				$("html").css("cursor", "default");
+				$("#dialog-modal").dialog('open');
+			}
+			else {
+				thumbnail = $(data);
+				
+				thumbnail.hide();
+	    		$("#thumbnails").prepend(thumbnail);
+				thumbnail.fadeIn(2000);
+			};
+		})
+
+		return false;
+	});
+};
+
+$(document).ready(installListener);
+
+$(function() {
+	$("#dialog-modal").dialog({
+		height: 140,
+		modal: true,
+		autoOpen: false,
+		draggable: false,
+		resizable: false,
+	});
+	
+    $(".edit-bar > textarea").focus(function() {
+        return false;
+    });
+
+    $(".edit-bar > textarea").mousedown(function() {
+        return false;
+    });
+    
+    $(".remove").click( function() {
+        $(getItem(this)).fadeOut(800, "linear");
+    });
+    
+    toRed();
+
+    var scrolling = false;
+    var scrollTimer = null;
+    
+    $(".edit-bar > textarea").mouseover(function() {
+        if (!scrolling) {
+            scrolling = true;
+            willScrollLeft(this);
+        }
+>>>>>>> .r12
+    });
+
+    $(".edit-bar > textarea").mouseout(function() {
+        scrolling = false;
+        stopScroll();
+        $(this).scrollLeft(0);
+    });
+
+    var scrollElement = function(element, offset) {
+        var t = $(element);
+        var s = t.scrollLeft();
+        
+<<<<<<< .mine
+        if (currentId != "")
+            $("#" + currentId).html(lastThumbnailHTML);
+
+        lastThumbnailHTML = thumbnail.html();
+        currentId = videoId;
+
+        var object = $("<object>")
+                        .attr("id", "current_video")
+                        .attr("type", "application/x-shockwave-flash")
+                        .append($("<param>").attr("name", "movie").attr("value", "https://www.youtube.com/v/" + videoId + "?version=3>"))
+                        .append($("<param>").attr("name", "allowFullscreen").attr("value", "true"))
+                        .append($("<param>").attr("name", "allowScriptAccess").attr("value", "true"))
+=======
+        t.scrollLeft(s + offset);
+>>>>>>> .r12
+        
+<<<<<<< .mine
+        var embed = $("<embed>")
+                        .attr("src", "https://www.youtube.com/v/" + videoId + "?version=3&hd=1")
+                        .attr("type", "application/x-shockwave-flash")
+                        .attr("autoplay", "true")
+                        .attr("hd", "true")
+                        .attr("fs", "true")
+                        .attr("allowfullscreen", "true")
+                        .attr("allowscriptAccess", "true")
+                        .attr("modestbranding", "true")
+                        .width(200)
+                        .height(150);
+=======
+        if (scrolling) {
+            var newS = t.scrollLeft();
+>>>>>>> .r12
+        
+<<<<<<< .mine
+        thumbnail.html(embed);
+    });
+}
+
+$(document).ready(installListener);
+
+var toRed = function() {
+    $("#bacon").animate({color: "red"}, 1000, toBlack);
+};
+var toBlack = function() {
+    $("#bacon").animate({color: "black"}, 1000, toRed);
+}
+
+$(function() {
+    $("input:submit").button();
+    $("#menu a").button();
+    //$('#add_video_form').submit(function() {
+    $('input:text[value=Add]').click(function() {
+        /*        
+        var input = $("input:text[name=add]");
+        var videoId = input.val();
+        
+        $("body").get("add_video.php", {add: videoId}, function(data, textStatus, jqXHR) {
+            var html = "\t<a class=\"thumbnail\" id=\"${entry[2]}\">\n"
+                        + "\t   <img src=\"https://img.youtube.com/vi/" + videoId + "/1.jpg\" alt=\"" + data + "\">\n"
+                        + "\t   <div>" + data + "</div>\n"
+                        + "\t</a>\n";
+            
+            $('#thumbnail').prepend(html);
+        })
+        */
+        
+        var a = $("<a></a>").addClass("thumbnail-container").css("display", "none");
+        var edit_mode_border = $("<div></div>").addClass("edit-mode-border");
+        var edit_bar = $("<div></div>").addClass("edit-bar");
+        var textarea = $("<textarea></textarea>").addClass("spacer").attr({rows: "1", readonly: "readonly"}).val("Reel People - Can't Stop (Kenny Dope Remixe)");
+        var remove = $("<div></div>").addClass("remove").attr("title", "Remove");
+        var thumbnail_wrapper = $("<span></span>").addClass("thumbnail-wrapper").css("background", "url(https://img.youtube.com/vi/z_86o0BSN1Y/1.jpg)");
+        var thumbnail = $("<span></span>").addClass("thumbnail").attr("id", "z_86o0BSN1Y");
+        
+        a.append(edit_mode_border.append(edit_bar.append(textarea).append(remove)).append(thumbnail-wrapper.append(thumbnail)));
+        
+        var html =
+"                                       <a class=\"thumbnail-container\">\n"
+"                                        <div class=\"edit-mode-border\">\n"
+"                                            <div class=\"edit-bar\">\n"
+"                                                <!--div class=\"pin\" title=\"Keep on this page\"></div-->\n"
+"                                                <textarea class=\"spacer\" rows=\"1\" readonly=\"readonly\">${entry[1]}</textarea>\n"
+"                                                <div class=\"remove\" title=\"Remove\" id></div>\n"
+"                                            </div>\n"
+"                                            <span class=\"thumbnail-wrapper\" style=\"background-image: url(https://img.youtube.com/vi/${entry[2]}/1.jpg); \">\n"
+"                                               <span class=\"thumbnail\" id=\"${entry[2]}\"></span>\n"
+"                                           </span>\n"
+"                                       </div>\n"
+"                                       </a>\n"
+
+        $('#thumbnails').prepend(a);
+        
+        a.show();
+        
+        //return false;
+    });
+            
+    $(".edit-bar > textarea").focus(function() {
+        return false;
+    });
+
+    $(".edit-bar > textarea").mousedown(function() {
+        return false;
+    });
+    
+    var scrolling = false;
+    var scrollTimer = null;
+    
+    $(".edit-bar > textarea").mouseover(function() {
+        if (!scrolling) {
+            scrolling = true;
+            willScrollLeft(this);
+        }
+    });
+
+    $(".edit-bar > textarea").mouseout(function() {
+        scrolling = false;
+        stopScroll();
+        $(this).scrollLeft(0);
+    });
+
+    var scrollElement = function(element, offset) {
+        var t = $(element);
+        var s = t.scrollLeft();
+        
+        t.scrollLeft(s + offset);
+        
+        if (scrolling) {
+            var newS = t.scrollLeft();
+        
+            if (newS == s) {
+=======
+            if (newS == s) {
+>>>>>>> .r12
+                stopScroll();
+                
+                if (offset > 0)
+                    setTimeout(function() {
+                        willScrollRight(element);
+                    }, 1000);
+                else
+                    setTimeout(function() {
+                        willScrollLeft(element);
+                    }, 1000);
+            }
+<<<<<<< .mine
+        }
+    }
+=======
+        }
+    };
+>>>>>>> .r12
+
+<<<<<<< .mine
+    var stopScroll = function() {
+        if (scrollTimer != null) {
+            clearInterval(scrollTimer);
+            scrollTimer = null;
+        }
+    }
+=======
+    var stopScroll = function() {
+        if (scrollTimer != null) {
+            (scrollTimer);
+            scrollTimer = null;
+        }
+    };
+>>>>>>> .r12
+
+<<<<<<< .mine
+    var willScrollLeft = function(element) {
+        if (scrolling)
+            scrollTimer = setInterval(function() {
+                scrollElement(element, 1);
+            }, 25);
+    }
+    
+    var willScrollRight = function(element) {
+        if (scrolling)
+            scrollTimer = setInterval(function() {
+                scrollElement(element, -1);
+            }, 25);
+    }
+    
+    toRed();
+    
+    $(".remove").click( function() {
+        $(getItem(this)).hide(1000);
+    })
+    
+    function getItem(el) {
+        return findAncestorByClass(el, 'thumbnail-container');
+    }
+    
+    function findAncestorByClass(el, className) {
+      return findAncestor(el, function(el) {
+        if (el.classList)
+          return el.classList.contains(className);
+        return null;
+      });
+    }
+    
+    function findAncestor(node, predicate) {
+      var last = false;
+      while (node != null && !(last = predicate(node))) {
+        node = node.parentNode;
+      }
+      return last ? node : null;
+    }
+});
+=======
+    var willScrollLeft = function(element) {
+        if (scrolling)
+            scrollTimer = setInterval(function() {
+                scrollElement(element, 1);
+            }, 25);
+    };
+    
+    var willScrollRight = function(element) {
+        if (scrolling)
+            scrollTimer = setInterval(function() {
+                scrollElement(element, -1);
+            }, 25);
+    };
+    
+    function getItem(el) {
+        return findAncestorByClass(el, 'thumbnail-container');
+    }
+    
+    function findAncestorByClass(el, className) {
+    	return findAncestor(el, function(el) {
+    		if (el.classList)
+    			return el.classList.contains(className);
+    		return null;
+    	});
+    }
+    
+    function findAncestor(node, predicate) {
+    	var last = false;
+    	
+    	while (node != null && !(last = predicate(node))) {
+    		node = node.parentNode;
+    	}
+    	return last ? node : null;
+    }
+});
+>>>>>>> .r12

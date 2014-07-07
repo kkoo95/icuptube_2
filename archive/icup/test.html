@@ -1,0 +1,46 @@
+<html>
+    <head>
+        <script type="text/javascript" src="js/jquery-dev.js"></script>
+        <script type="text/javascript" src="js/jquery-ui.js"></script>
+        <link rel="stylesheet" type="text/css" href="style/jquery-ui.custom.css">
+        <style type="text/css">
+                img[width] { 
+                    //width: 50px;
+                    border: 2px solid red;
+                }
+                /*
+                            $("input:submit").button();
+            $("#menu a").button();
+            $('#add_video_form').submit(function() {
+                var input = $("input:text[name=add]");
+                */
+        </style>
+    </head>
+    
+    <body>
+        <a><img class="profilePic" src="http://profile.ak.fbcdn.net/hprofile-ak-snc4/203368_669724740_8373626_q.jpg" alt="" width='75'></a>
+        <input type="submit" name="Add" id="add"/>
+    </body>
+    
+    
+    <script type="text/javascript">
+        $(document).load(function() {
+            console.log("load")
+        });
+        $(document).ready(function() {
+            console.log("ready")
+        });
+        $(document).change(function() {
+            console.log("changed");
+        });
+        
+        $("img").ready(function() {
+            console.log("img ready")
+        });
+
+        $("#add").click(function() {
+            $("body").append("<img class=\"profilePic\" src=\"http://profile.ak.fbcdn.net/hprofile-ak-snc4/203368_669724740_8373626_q.jpg\" alt=\"\"  width='75'>");
+        });
+    </script>
+    
+</html>
